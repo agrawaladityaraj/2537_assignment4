@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
-import { Stack, Group, Text } from "@mantine/core";
+import { Stack, Group, Text, SimpleGrid, Image, Card } from "@mantine/core";
+import ReactCardFlip from "react-card-flip";
 
 import { ICard, IPokemon } from "../models";
 
@@ -110,7 +111,7 @@ function Game({ difficulty }: IProps) {
   }, [timeLeft, pairs]);
 
   const activatePowerUp = () => {
-    if (powerUp) return;
+    if (powerUp || gameOver) return;
     setPowerUp(true);
     const originalState = [...cardsRef.current];
     setCards(cardsRef.current.map((card) => ({ ...card, flipped: true })));
@@ -148,6 +149,57 @@ function Game({ difficulty }: IProps) {
           <Text>{timeLeft}</Text>
         </Group>
       </Stack>
+      {powerUp && (
+        <Text size="lg" fw={700} align="center">
+          Powerup activated!
+        </Text>
+      )}
+      <SimpleGrid
+        cols={5}
+        spacing="lg"
+        breakpoints={[
+          { maxWidth: "md", cols: 4, spacing: "md" },
+          { maxWidth: "sm", cols: 3, spacing: "sm" },
+          { maxWidth: "xs", cols: 2, spacing: "sm" },
+        ]}
+      >
+        {cards.map((card: ICard, index: number) => (
+          <Card
+            onClick={() => flip(index)}
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            withBorder
+            key={index}
+          >
+            <ReactCardFlip
+              isFlipped={card.flipped}
+              flipDirection="horizontal"
+              infinite
+            >
+              <Image
+                height={150}
+                width={150}
+                mx="auto"
+                src="/pokemon.png"
+                alt="Card"
+              />
+              <Image
+                height={150}
+                width={150}
+                mx="auto"
+                src={card.pokemon.image}
+                alt="Pokemon"
+              />
+            </ReactCardFlip>
+          </Card>
+        ))}
+      </SimpleGrid>
+      {gameOver && (
+        <Text size="lg" fw={700} align="center">
+          {pairs === 0 ? "You Win!" : "You Lose!"}
+        </Text>
+      )}
     </Stack>
   );
 }
