@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import IPokemon from "../models/IPokemon";
+import { IPokemon } from "../models";
 
 const getPokemon = async (id: number): Promise<IPokemon> => {
   const { data } = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
